@@ -7,12 +7,23 @@ Dotenv.load
 class OpenRouterWrapper
   API_URL = "https://openrouter.ai/api/v1/chat/completions".freeze
 
-  def initialize(model: "deepseek/deepseek-r1-0528-qwen3-8b")
+  def initialize(model: "deepseek/deepseek-r1-0528", provider: nil)
+    validate_api_key!
     @model = model
+    @provider = provider
     @headers = {
       "Authorization" => "Bearer #{ENV['OPENROUTER_API_KEY']}",
-      "Content-Type" => "application/json"
+      "Content-Type" => "application/json",
+      "HTTP-Referer" => "https://github.com/zachbeta/ruby_codegen_app",
+      "X-Title" => "Ruby Codegen Chat"
     }
+  end
+
+  # Public API Methods
+  public
+
+  def provider
+    @provider || ModelConfig.for(@model)[:provider]
   end
 
   def generate_response(messages, stream: false, &chunk_handler)
@@ -29,8 +40,6 @@ class OpenRouterWrapper
       parse_response(response)
     end
   end
-
-  private
 
   def process_streaming_response(body, &chunk_handler)
     full_content = ""
@@ -63,13 +72,20 @@ class OpenRouterWrapper
     full_content
   end
 
-  private
-
   def parse_response(response)
     if response.success?
       response.dig("choices", 0, "message", "content")
     else
       "Error: #{response.code} - #{response.body}"
+    end
+  end
+
+  # Private Methods
+  private
+
+  def validate_api_key!
+    unless ENV['OPENROUTER_API_KEY']
+      raise "OPENROUTER_API_KEY environment variable not set"
     end
   end
 end

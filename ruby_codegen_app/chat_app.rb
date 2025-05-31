@@ -1,14 +1,20 @@
 require 'json'
 require_relative 'token_utils'
 require_relative 'open_router_wrapper'
+require_relative 'cost_calculator'
 
 MAX_TOKENS = 8000
 
 class ChatApp
   def initialize
-    @llm = OpenRouterWrapper.new
+    @model_name = "deepseek/deepseek-r1-0528" # Default model
+    model_config = ModelConfig.for(@model_name)
+    @llm = OpenRouterWrapper.new(model: @model_name, provider: model_config[:provider])
     @history_file = "conversation_history.jsonl"
-    @current_tokens = 0
+    @input_tokens = 0
+    @output_tokens = 0
+    @total_cost = 0.0
+    @cost_calculator = CostCalculator.new(@model_name)
     load_history
   end
 
@@ -42,7 +48,12 @@ class ChatApp
         begin
           msg = JSON.parse(line, symbolize_names: true)
           history << msg
-          @current_tokens += TokenUtils.count_message_tokens(msg)
+          tokens = TokenUtils.count_message_tokens(@model_name, msg)
+          if msg[:role] == "user"
+            @input_tokens += tokens
+          else
+            @output_tokens += tokens
+          end
         rescue JSON::ParserError
           # Skip malformed entries
         end
@@ -56,7 +67,11 @@ class ChatApp
     puts "Thinking..."
     user_msg = { role: "user", content: input }
     @conversation_history << user_msg
-    @current_tokens += TokenUtils.count_message_tokens(user_msg)
+    
+    # Track input tokens and cost
+    input_tokens = TokenUtils.count_message_tokens(@model_name, user_msg)
+    @input_tokens += input_tokens
+    @total_cost += @cost_calculator.calculate(input_tokens, 0)
     
     save_message(user_msg)
     truncate_history
@@ -68,14 +83,18 @@ class ChatApp
       STDOUT.flush
     end
     
+    # Finalize output token count
+    output_tokens = TokenUtils.count_message_tokens(@model_name,
+      { role: "assistant", content: full_response })
+    @output_tokens += output_tokens
+    @total_cost += @cost_calculator.calculate(0, output_tokens)
+    
     assistant_msg = { role: "assistant", content: full_response }
     @conversation_history << assistant_msg
-    @current_tokens += TokenUtils.count_message_tokens(assistant_msg)
-    
     save_message(assistant_msg)
     truncate_history
     
-    puts "\n(Tokens used: #{@current_tokens}/#{MAX_TOKENS})"
+    puts "\n(Tokens: #{@input_tokens}↑ #{@output_tokens}↓/#{MAX_TOKENS} | Cost: $#{@total_cost})"
   end
 
   def save_message(message)
@@ -85,9 +104,14 @@ class ChatApp
   end
 
   def truncate_history
-    while @current_tokens > MAX_TOKENS && @conversation_history.size > 1
+    while (@input_tokens + @output_tokens) > MAX_TOKENS && @conversation_history.size > 1
       removed = @conversation_history.shift
-      @current_tokens -= TokenUtils.count_message_tokens(removed)
+      tokens = TokenUtils.count_message_tokens(@model_name, removed)
+      if removed[:role] == "user"
+        @input_tokens -= tokens
+      else
+        @output_tokens -= tokens
+      end
     end
   end
 end
