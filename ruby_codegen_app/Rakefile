@@ -1,4 +1,7 @@
 require_relative 'chat_app'
+require 'rake'
+
+Dir.glob('tasks/*.rake').each { |r| import r }
 
 task :chat do
   ChatApp.new.run

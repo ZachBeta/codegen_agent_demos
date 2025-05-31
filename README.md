@@ -31,3 +31,6 @@ Enjoy the essence of sakura season! 🌸[DEBUG] Calculating cost for 0 input @ $
 (Tokens: 6↑ 166↓/8000 | Cost: $3.5989999999999997e-10)
 > 
 ```
+
+```
+rake 'codegen:generate[Create a Ruby class called FizzBuzz that implements the fizzbuzz game. It should have a class method `play` that takes a number and returns "Fizz" for multiples of 3, "Buzz" for multiples of 5, "FizzBuzz" for multiples of both, and the number otherwise.]' OUTPUT=fizzbuzz.rb
