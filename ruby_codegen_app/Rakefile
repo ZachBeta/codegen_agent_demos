@@ -1,0 +1,7 @@
+require_relative 'chat_app'
+
+task :chat do
+  ChatApp.new.run
+end
+
+task default: :chat

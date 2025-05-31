@@ -1,4 +1,4 @@
-require 'tiktoken'
+require 'tiktoken_ruby'
 
 class TokenUtils
   ENCODING = Tiktoken.encoding_for_model("gpt-4")
