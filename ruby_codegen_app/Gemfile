@@ -8,3 +8,5 @@ gem 'tiktoken_ruby'
 gem 'rake'
 gem 'faraday'
 gem 'tokenizers'
+gem 'docker-api'
+gem 'minitest', group: :test

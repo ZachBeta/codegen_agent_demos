@@ -3,7 +3,12 @@ GEM
   specs:
     bigdecimal (3.2.1)
     csv (3.3.4)
+    docker-api (2.4.0)
+      excon (>= 0.64.0)
+      multi_json
     dotenv (3.1.8)
+    excon (1.2.7)
+      logger
     faraday (2.13.1)
       faraday-net_http (>= 2.0, < 3.5)
       json
@@ -17,6 +22,8 @@ GEM
     json (2.12.2)
     logger (1.7.0)
     mini_mime (1.1.5)
+    minitest (5.25.5)
+    multi_json (1.15.0)
     multi_xml (0.7.2)
       bigdecimal (~> 3.1)
     net-http (0.6.0)
@@ -38,9 +45,11 @@ PLATFORMS
 
 DEPENDENCIES
   bundler
+  docker-api
   dotenv
   faraday
   httparty
+  minitest
   ostruct
   rake
   tiktoken_ruby

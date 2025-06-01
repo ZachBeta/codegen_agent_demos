@@ -1,6 +1,42 @@
 # codegen_agent_demos
 experimenting with minimal codegen agents
 
+## current
+```
+codegen_agent_demos % cd ruby_codegen_app && ruby chat_repl.rb
+=== Ruby CodeGen REPL ===
+Type 'exit' to quit, 'history' to view history
+Ruby CodeGen REPL - Type 'exit' to quit, 'history' to view history
+codegen> generate: hello world in ruby
+Generating code for: hello world in ruby
+Generating code for: hello world in ruby
+Generated code:
+puts "hello world"
+Run this code? (y/n) y
+=> hello world
+codegen> chat: hey there
+=> Hey! 👋 How's it going? I'm here to help with anything you need—questions, coding help, or just chatting. What can I do for you today? 😊
+codegen> help
+Available commands:
+  chat:<message>    - Chat with the AI assistant
+  generate:<prompt> - Generate and execute Ruby code
+  history           - Show command history
+  clear             - Clear history
+  help, ?           - Show this help
+  exit              - Exit the REPL
+codegen> history
+
+Command History (last 5 entries):
+1. Prompt: hello world in ruby
+Generated Code:
+puts "hello world"
+Output: hello world
+2. Command: chat: hey there
+Output: Hey! 👋 How's it going? I'm here to help with anything you need—questions, coding help, or just chatting. What can I do for you today? 😊
+codegen> exit 
+```
+
+## stale
 ```
 ruby_codegen_app % bundle exec rake
 [DEBUG] Fetching model config from: https://openrouter.ai/api/v1/models/deepseek/deepseek-r1-0528/endpoints
@@ -34,3 +70,4 @@ Enjoy the essence of sakura season! 🌸[DEBUG] Calculating cost for 0 input @ $
 
 ```
 rake 'codegen:generate[Create a Ruby class called FizzBuzz that implements the fizzbuzz game. It should have a class method `play` that takes a number and returns "Fizz" for multiples of 3, "Buzz" for multiples of 5, "FizzBuzz" for multiples of both, and the number otherwise.]' OUTPUT=fizzbuzz.rb
+```

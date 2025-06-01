@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  codegen:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+    ports:
+      - "4567:4567"
+    restart: unless-stopped

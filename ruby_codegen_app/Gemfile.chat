@@ -1,0 +1,15 @@
+source 'https://rubygems.org'
+
+# Core functionality
+gem 'pry', '~> 0.14'
+gem 'awesome_print', '~> 1.9'
+
+# UI Enhancements
+gem 'tty-prompt', '~> 0.23'
+gem 'pastel', '~> 0.8'
+gem 'colorize', '~> 0.8'
+
+group :development do
+  gem 'rubocop', '~> 1.50'
+  gem 'rubocop-rspec', '~> 2.20'
+end
